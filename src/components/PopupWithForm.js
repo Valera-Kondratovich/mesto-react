@@ -3,7 +3,7 @@ import React from "react";
 function PopupWithForm({ title, name, isOpen, onClose, children }) {
   return (
     <>
-      {/* попап редактирования информации о профиле */}
+      {/* унивирсальгый попап для редактирования профиля аватар и добавления карточки */}
       <div className={`popup popup_${name} ${isOpen ? "popup_opened" : ""}`}>
         <div className="popup__body">
           <div className="popup__content">
@@ -19,6 +19,9 @@ function PopupWithForm({ title, name, isOpen, onClose, children }) {
                 type="button"
                 onClick={onClose}
               />
+              <button className="popup__button-save" type="submit">
+                Сохранить
+              </button>
             </form>
           </div>
         </div>

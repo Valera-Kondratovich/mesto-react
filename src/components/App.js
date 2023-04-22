@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -6,32 +6,34 @@ import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
 
 function App() {
-  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
-  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
-  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
-  const [selectedCard, setSelectedCard] = React.useState([false, {}]);
+  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
+  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
+  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
+  const [isImagePopupOpen, setIsImagePopupOpen] = useState(false)
+  const [selectedCard, setSelectedCard] = useState({});
 
   function handleEditAvatarClick() {
-    setIsEditAvatarPopupOpen(!isEditAvatarPopupOpen);
+    setIsEditAvatarPopupOpen(true);
   }
 
   function handleEditProfileClick() {
-    setIsEditProfilePopupOpen(!isEditProfilePopupOpen);
+    setIsEditProfilePopupOpen(true);
   }
 
   function handleAddPlaceClick() {
-    setIsAddPlacePopupOpen(!isAddPlacePopupOpen);
+    setIsAddPlacePopupOpen(true);
   }
 
   function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
-    setSelectedCard([false, {}]);
+    setIsImagePopupOpen(false);
   }
 
   function handleCardClick(card) {
-    setSelectedCard([true, card]);
+    setIsImagePopupOpen(true)
+    setSelectedCard(card);
   }
 
   return (
@@ -44,6 +46,7 @@ function App() {
         onCardClick={handleCardClick}
       />
       <Footer />
+      {/* вызов попап редактирования аватар */}
       <PopupWithForm
         isOpen={isEditAvatarPopupOpen}
         title="Обновить аватар"
@@ -59,10 +62,8 @@ function App() {
           required
         />
         <span id="input-avatar-error" className="popup__error" />
-        <button className="popup__button-save" type="submit">
-          Сохранить
-        </button>
       </PopupWithForm>
+      {/* вызов попапа редактирования профиля */}
       <PopupWithForm
         isOpen={isEditProfilePopupOpen}
         title="Редактировать профиль"
@@ -91,10 +92,8 @@ function App() {
           maxLength={200}
         />
         <span id="input-descr-error" className="popup__error" />
-        <button className="popup__button-save" type="submit">
-          Сохранить
-        </button>
       </PopupWithForm>
+      {/* вызов попапа добавления карточки */}
       <PopupWithForm
         isOpen={isAddPlacePopupOpen}
         title="Новое место"
@@ -121,11 +120,9 @@ function App() {
           required
         />
         <span id="input-img-url-error" className="popup__error" />
-        <button className="popup__button-save" type="submit">
-          Сохранить
-        </button>
       </PopupWithForm>
-      <ImagePopup card={selectedCard} onClose={closeAllPopups} />;
+      {/* вызов попапа отображения картинки на весь экран */}
+      <ImagePopup isOpen={isImagePopupOpen} card={selectedCard} onClose={closeAllPopups} />;
     </>
   );
 }

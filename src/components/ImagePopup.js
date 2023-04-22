@@ -2,7 +2,7 @@ import React from "react";
 
 function ImagePopup(props) {
   return (
-    <div className={`popup popup_image ${props.card[0] ? "popup_opened" : ""}`}>
+    <div className={`popup popup_image ${props.isOpen ? "popup_opened" : ""}`}>
       <div className="popup__wrap">
         <button
           className="popup__button-close"
@@ -11,10 +11,10 @@ function ImagePopup(props) {
         />
         <img
           className="popup__picture"
-          src={`${props.card[1].link}`}
-          alt={`${props.card[1].title}`}
+          src={`${props.card.link}`}
+          alt={`${props.card.name}`}
         />
-        <p className="popup__description">{props.card[1].title}</p>
+        <p className="popup__description">{props.card.name}</p>
       </div>
     </div>
   );
