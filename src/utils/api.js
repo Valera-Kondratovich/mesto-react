@@ -24,10 +24,6 @@ const tokenApi = '9792b8e2-d3a5-4eb4-90af-3d3354b4d9c2';                // то�
     })
   }
 
-  // getAllNeedData() {
-  //   return Promise.all([this._getUserData(), this.getAllCardsData()])
-  // }
-
   patchUserData(data) {
     return this._request(`${this._url}/users/me`, {
       method: 'PATCH',
@@ -42,6 +38,15 @@ const tokenApi = '9792b8e2-d3a5-4eb4-90af-3d3354b4d9c2';                // то�
       headers: this._headers,
       body: JSON.stringify(data)
     })
+  }
+
+  changeLikeCardStatus(idImage, isLiked){
+if (isLiked) {
+  return this.putLike(idImage)
+}
+else {
+  return this.delLike(idImage)
+}
   }
 
   putLike(idImage) {
