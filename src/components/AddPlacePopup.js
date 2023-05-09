@@ -1,10 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PopupWithForm from "./PopupWithForm";
 
 function AddPlacePopup ({isOpen, onClose, onAddPlace}) {
 
 const [nameImage, setNameImage] = useState('')
 const [urlImage, setUrlImage] = useState('')
+
+useEffect(()=>{
+  setNameImage ("");
+  setUrlImage ("")
+
+},[ isOpen])
 
 function handleChangeInputNameImage(e){
   setNameImage(e.target.value)
@@ -20,13 +26,15 @@ function handleAddPlaceSubmit(e){
     name: nameImage,
     link: urlImage
   })
+
   }
 
   return (
     <PopupWithForm
         isOpen={isOpen}
-        title="Новое место"
         name="gallery"
+        title="Новое место"
+        titleButtonSumbit="Сохранить"
         onClose={onClose}
         onSumbit={handleAddPlaceSubmit}
       >
@@ -40,6 +48,7 @@ function handleAddPlaceSubmit(e){
           minLength={2}
           maxLength={30}
           onChange={handleChangeInputNameImage}
+          value={nameImage}
         />
         <span id="input-img-name-error" className="popup__error" />
         <input
@@ -50,6 +59,7 @@ function handleAddPlaceSubmit(e){
           placeholder="Ссылка на картинку"
           required
           onChange={handleChangeInputUrlImage}
+          value={urlImage}
         />
         <span id="input-img-url-error" className="popup__error" />
       </PopupWithForm>

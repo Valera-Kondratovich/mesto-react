@@ -24,13 +24,15 @@ function App() {
   useEffect(() => {
     api.getUserData().then((dataUser) => {
       setCurrentUser(dataUser);
-    });
+    })
+    .catch((err) => console.log(err));
   }, []);
 
   useEffect(() => {
     api.getAllCardsData().then((data) => {
       setCards(data);
-    });
+    })
+    .catch((err) => console.log(err));
   }, []);
 
   function handleEditAvatarClick() {
@@ -63,11 +65,11 @@ function App() {
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
     api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
       setCards((cards) => cards.map((c) => (c._id === card._id ? newCard : c)));
-    });
+    })
+    .catch((err) => console.log(err));
   }
 
   function handelCardImageDeletClick(card) {
-    console.log(card);
     setIsCardImageDeletePopup(true);
     setCardsDelete(card);
   }
@@ -80,31 +82,36 @@ function App() {
   function handleCardDelete(card) {
     api.delCard(card._id).then(() => {
       setCards((cards) => cards.filter((c) => c._id !== card._id));
-    });
+      closeAllPopups();
+    })
+    .catch((err) => console.log(err));
     setSelectedCard(card);
     setCardsDelete({});
-    closeAllPopups();
   }
 
   function handleUpdateUser(updateDataUser) {
     api.patchUserData(updateDataUser).then((updateDataUser) => {
       setCurrentUser(updateDataUser);
-    });
-    closeAllPopups();
+      closeAllPopups();
+    })
+    .catch((err) => console.log(err));
   }
 
   function handleUpdateAvatar(updateAvatar) {
     api.patchUserAvatar(updateAvatar).then((updateAvatar) => {
       setCurrentUser(updateAvatar);
-    });
-    closeAllPopups();
+      closeAllPopups();
+    })
+    .catch((err) => console.log(err));
   }
 
   function handleAddPlace(newPlace) {
     api.postCardData(newPlace).then((newPlace) => {
       setCards([newPlace, ...cards]);
-    });
-    closeAllPopups();
+      closeAllPopups();
+    })
+    .catch((err) => console.log(err));
+
   }
 
   return (

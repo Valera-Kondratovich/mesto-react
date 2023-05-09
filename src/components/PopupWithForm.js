@@ -1,6 +1,6 @@
 import React from "react";
 
-function PopupWithForm({ title, name, isOpen, onClose, children, onSumbit}) {
+function PopupWithForm({ title, name, isOpen, onClose, children, onSumbit, titleButtonSumbit}) {
   return (
     <>
       {/* унивирсальгый попап для редактирования профиля, аватар и добавления карточки */}
@@ -21,7 +21,7 @@ function PopupWithForm({ title, name, isOpen, onClose, children, onSumbit}) {
                 onClick={onClose}
               />
               <button className="popup__button-save" type="submit">
-                Сохранить
+                {titleButtonSumbit}
               </button>
             </form>
           </div>
