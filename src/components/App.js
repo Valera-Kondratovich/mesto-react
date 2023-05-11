@@ -83,10 +83,9 @@ function App() {
     api.delCard(card._id).then(() => {
       setCards((cards) => cards.filter((c) => c._id !== card._id));
       closeAllPopups();
+      setCardsDelete({});
     })
     .catch((err) => console.log(err));
-    setSelectedCard(card);
-    setCardsDelete({});
   }
 
   function handleUpdateUser(updateDataUser) {
