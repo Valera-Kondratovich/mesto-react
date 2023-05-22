@@ -33,7 +33,7 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
       isOpen={isOpen}
       name="profile"
       title="Редактировать профиль"
-      titleButtonSumbit="Сохранить"
+
       onClose={onClose}
       onSumbit={handleSubmit}
     >
@@ -63,6 +63,9 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
         value={description ?? ""}
       />
       <span id="input-descr-error" className="popup__error" />
+      <button className="popup__button-save" type="submit">
+                Сохранить
+              </button>
     </PopupWithForm>
   );
 }

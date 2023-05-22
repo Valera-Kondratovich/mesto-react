@@ -34,7 +34,7 @@ function handleAddPlaceSubmit(e){
         isOpen={isOpen}
         name="gallery"
         title="Новое место"
-        titleButtonSumbit="Сохранить"
+        // titleButtonSumbit="Сохранить"
         onClose={onClose}
         onSumbit={handleAddPlaceSubmit}
       >
@@ -62,6 +62,9 @@ function handleAddPlaceSubmit(e){
           value={urlImage}
         />
         <span id="input-img-url-error" className="popup__error" />
+        <button className="popup__button-save" type="submit">
+                Сохранить
+              </button>
       </PopupWithForm>
   )
 }

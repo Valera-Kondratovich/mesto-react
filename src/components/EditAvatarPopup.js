@@ -20,7 +20,7 @@ function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
       isOpen={isOpen}
       name="avatar"
       title="Обновить аватар"
-      titleButtonSumbit="Сохранить"
+      // titleButtonSumbit="Сохранить"
       onClose={onClose}
       onSumbit={handleSubmit}
     >
@@ -34,6 +34,9 @@ function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
         ref={inputValueRef}
       />
       <span id="input-avatar-error" className="popup__error" />
+      <button className="popup__button-save" type="submit">
+                Сохранить
+              </button>
     </PopupWithForm>
   );
 }

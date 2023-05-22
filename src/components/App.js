@@ -2,13 +2,19 @@ import React, { useState, useEffect } from "react";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
+import Login from "./Login";
+import Register from "./Register";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
 import ImagePopup from "./ImagePopup";
 import CardImageDeletePopup from "./CardImageDeletePopup";
+import InfoTooltip from "./InfoTooltip";
 import api from "../utils/api";
+import * as auth from "../utils/auth";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import { Routes, Route, useNavigate, Link, NavLink } from "react-router-dom";
+import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
@@ -16,24 +22,63 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
   const [isCardImageDeletePopup, setIsCardImageDeletePopup] = useState(false);
+  const [isInfoPopupOpen, setIsInfoPopupOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState({});
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
   const [cardDelete, setCardsDelete] = useState({});
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [email, setEmail] = useState("");
+  const [isError, setIsError] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    api.getUserData().then((dataUser) => {
-      setCurrentUser(dataUser);
-    })
-    .catch((err) => console.log(err));
+    tokenCheck();
   }, []);
 
   useEffect(() => {
-    api.getAllCardsData().then((data) => {
-      setCards(data);
-    })
-    .catch((err) => console.log(err));
+    api
+      .getUserData()
+      .then((dataUser) => {
+        setCurrentUser(dataUser);
+      })
+      .catch((err) => console.log(err));
   }, []);
+
+  useEffect(() => {
+    api
+      .getAllCardsData()
+      .then((data) => {
+        setCards(data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  function tokenCheck() {
+    const jwt = localStorage.getItem("jwt");
+    if (jwt) {
+      auth
+        .getContent(jwt)
+        .then((res) =>
+          res.ok ? res.json() : Promise.reject(`Ошибка ${res.status}`)
+        )
+        .then((res) => {
+          setLoggedIn(true);
+          setEmail(res.data.email);
+          navigate("/");
+        });
+    }
+  }
+
+  function handleInfoPopup(err) {
+    setIsInfoPopupOpen(true);
+    setIsError(err);
+  }
+
+  function handleLogin(email) {
+    setLoggedIn(true);
+    setEmail(email);
+  }
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
@@ -53,6 +98,7 @@ function App() {
     setIsAddPlacePopupOpen(false);
     setIsImagePopupOpen(false);
     setIsCardImageDeletePopup(false);
+    setIsInfoPopupOpen(false);
   }
 
   function handleCardClick(card) {
@@ -63,10 +109,14 @@ function App() {
   function handleCardLike(card) {
     //проверяем, есть ли уже лайк на этой карточке
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
-    api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
-      setCards((cards) => cards.map((c) => (c._id === card._id ? newCard : c)));
-    })
-    .catch((err) => console.log(err));
+    api
+      .changeLikeCardStatus(card._id, !isLiked)
+      .then((newCard) => {
+        setCards((cards) =>
+          cards.map((c) => (c._id === card._id ? newCard : c))
+        );
+      })
+      .catch((err) => console.log(err));
   }
 
   function handelCardImageDeletClick(card) {
@@ -80,52 +130,78 @@ function App() {
   }
 
   function handleCardDelete(card) {
-    api.delCard(card._id).then(() => {
-      setCards((cards) => cards.filter((c) => c._id !== card._id));
-      closeAllPopups();
-      setCardsDelete({});
-    })
-    .catch((err) => console.log(err));
+    api
+      .delCard(card._id)
+      .then(() => {
+        setCards((cards) => cards.filter((c) => c._id !== card._id));
+        closeAllPopups();
+        setCardsDelete({});
+      })
+      .catch((err) => console.log(err));
   }
 
   function handleUpdateUser(updateDataUser) {
-    api.patchUserData(updateDataUser).then((updateDataUser) => {
-      setCurrentUser(updateDataUser);
-      closeAllPopups();
-    })
-    .catch((err) => console.log(err));
+    api
+      .patchUserData(updateDataUser)
+      .then((updateDataUser) => {
+        setCurrentUser(updateDataUser);
+        closeAllPopups();
+      })
+      .catch((err) => console.log(err));
   }
 
   function handleUpdateAvatar(updateAvatar) {
-    api.patchUserAvatar(updateAvatar).then((updateAvatar) => {
-      setCurrentUser(updateAvatar);
-      closeAllPopups();
-    })
-    .catch((err) => console.log(err));
+    api
+      .patchUserAvatar(updateAvatar)
+      .then((updateAvatar) => {
+        setCurrentUser(updateAvatar);
+        closeAllPopups();
+      })
+      .catch((err) => console.log(err));
   }
 
   function handleAddPlace(newPlace) {
-    api.postCardData(newPlace).then((newPlace) => {
-      setCards([newPlace, ...cards]);
-      closeAllPopups();
-    })
-    .catch((err) => console.log(err));
-
+    api
+      .postCardData(newPlace)
+      .then((newPlace) => {
+        setCards([newPlace, ...cards]);
+        closeAllPopups();
+      })
+      .catch((err) => console.log(err));
   }
 
   return (
     <>
       <CurrentUserContext.Provider value={currentUser}>
-        <Header />
-        <Main
-          onEditAvatar={handleEditAvatarClick}
-          onEditProfile={handleEditProfileClick}
-          onAddPlace={handleAddPlaceClick}
-          onCardClick={handleCardClick}
-          onCardDeleteClick={handelCardImageDeletClick}
-          onCardLike={handleCardLike}
-          cards={cards}
-        />
+        <Header email={email} />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute
+                element={Main}
+                onEditAvatar={handleEditAvatarClick}
+                onEditProfile={handleEditProfileClick}
+                onAddPlace={handleAddPlaceClick}
+                onCardClick={handleCardClick}
+                onCardDeleteClick={handelCardImageDeletClick}
+                onCardLike={handleCardLike}
+                cards={cards}
+                loggedIn={loggedIn}
+              />
+            }
+          />
+          <Route path="*" element={<Login handleLogin={handleLogin} />} />
+          <Route
+            path="/sign-in"
+            element={<Login handleLogin={handleLogin} />}
+          />
+          <Route
+            path="/sign-up"
+            element={<Register onInfoPopup={handleInfoPopup} />}
+          />
+        </Routes>
+
         <Footer />
         {/* вызов попап редактирования аватар */}
         <EditAvatarPopup
@@ -150,6 +226,12 @@ function App() {
           isOpen={isImagePopupOpen}
           card={selectedCard}
           onClose={closeAllPopups}
+        />
+        {/* вызов попапа отображения уведомления об успехе или ошибке */}
+        <InfoTooltip
+          isOpen={isInfoPopupOpen}
+          onClose={closeAllPopups}
+          onError={isError}
         />
         <CardImageDeletePopup
           isOpen={isCardImageDeletePopup}
